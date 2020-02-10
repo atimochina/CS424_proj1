@@ -1,0 +1,41 @@
+ABOUT ME FILE
+
+This is a data visulaization project based on the literrati project found @ https://www.litterati.org/.
+The data utilized for this project comes from: https://www.evl.uic.edu/aej/424/litterati challenge-65.csv
+This is the data collected as a challenge for the Go Green Forest Park group from the western suburbs of Forest Park, IL.
+
+This code was written to be visualized on the EVL Lab screen for my CS424: Visualization and Visual Analytics @ UIC
+using the coding language R in RStudio IDE.
+
+To run the app:
+download the project from github respository
+extract files into a seperate folder(aka a directory)
+open the file app.r in RStudio 
+run the application through IDE by pressing green RunApp button in upper header buttons
+
+If you do not have RStudio or R installed to your computer you can find information on downloading and 
+tools at Prof.Andrew Johnsons site: https://www.evl.uic.edu/aej/424/week02.html
+
+Just in case the link no longer works here is some useful links to get you started:
+R - https://www.r-project.org/
+R studio - https://www.rstudio.com/
+Shiny - http://shiny.rstudio.com/
+Shiny Dashboard - https://rstudio.github.io/shinydashboard/
+
+An online version of the project can be found at:  https://atimochina.shinyapps.io/TheLitterProject/
+For more information on the project you can hit up my google sites @ https://sites.google.com/uic.edu/atimoc2cs424/home?authuser=0
+
+Necessary libraries for this project are: 
+library(shiny)
+library(shinydashboard)
+library(ggplot2)
+library(lubridate)
+library(grid)
+library(leaflet)
+library(stringr)
+library(splitstackshape)
+library(DT)
+
+To download the packages for the libraries type install.packages("<library_name>") into the RStudio Console
+i.e. install.packages("shiny")
+
