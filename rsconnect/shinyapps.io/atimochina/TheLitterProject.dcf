@@ -1,0 +1,13 @@
+name: TheLitterProject
+title: TheLitterProject
+username:
+account: atimochina
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1754775
+bundleId: 2789696
+url: https://atimochina.shinyapps.io/TheLitterProject/
+when: 1581361275.90613
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data.R
