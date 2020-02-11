@@ -3,12 +3,12 @@ installed.packages("ggplot2")
 installed.packages("leaflet")
 installed.packages("stringr")
 installed.packages("splitstackshape")
+
 #libraries
 library(shiny)
 library(shinydashboard)
 library(ggplot2)
 library(lubridate)
-library(grid)
 library(leaflet)
 library(stringr)
 library(splitstackshape)
@@ -104,44 +104,41 @@ ui <- dashboardPage(
     #Drop down options
     dashboardSidebar(disable = FALSE, collapsed = FALSE,
                      br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), #breaks
+                     br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), #breaks
                      selectInput("User", "Select user to visualize", c("summary",top_ten_users[,1]),selected = "summary"),
                      br(),br(),br(),br(),
-                     selectInput("TagSelect", "Select tag to update visuals", c("none",top_ten_tags[,1]), selected = "none")
-    
+                     selectInput("TagSelect", "Select tag to update visuals", c("none",top_ten_tags[,1]), selected = "none"),
+                     br(),
+                     actionButton("show", "Open Resources"),
+                     actionButton("close", "Close Resources")
     ),
     #main body
     dashboardBody(
       fluidRow(
-        column(4,
-               fluidRow(box(title = "# of Litter per Day",solidHeader = TRUE, status = "primary", width = 12, plotOutput("bar1",height = 400))),
-               fluidRow(box(title = "# of Litter per Weekday",solidHeader = TRUE, status = "primary", width = 12, plotOutput("bar2",height = 400)))
-              
+        column(12,fluidRow(box(title = "# of Litter per Day",solidHeader = TRUE, status = "primary", width = 12, plotOutput("bar1",height = 400))))
+      ),
+      fluidRow(
+        column(2,fluidRow(box(title = "# of Litter per Day Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("table1",height = 400)))
         ),
-        column(2,
-               fluidRow(box(title = "# of Litter per Day Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("table1",height = 400))),
-               fluidRow(box(title = "# of Litter per Weekday Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("table2",height = 400)))
+        column(2,fluidRow(box(title = "# of Litter per Weekday Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("table2",height = 400)))
         ),
-        column(4,
-               fluidRow(box(title = "# of Litter per Hour",solidHeader = TRUE, status = "primary", width = 12, plotOutput("bar3",height = 400))),
-               fluidRow(box(title = "# of Litter per Top Tag",solidHeader = TRUE, status = "primary", width = 12, plotOutput("bar4",height = 400)))
+        column(2,fluidRow(box(title = "# of Litter per Hour Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("table3",height = 400)))
         ),
-        column(2,
-               fluidRow(box(title = "# of Litter per Hour Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("table3",height = 400))),
-               fluidRow(box(title = "# of Litter per Top Tag Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("table4",height = 400)))
+        column(2,fluidRow(box(title = "# of Litter per Top Tag Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("table4",height = 400)))
+        ),
+        column(1,fluidRow(box(title = "Total Number of Litter Picked-Up: ", solidHeader = TRUE, status = "primary", width = 12, textOutput("total")))
+        ),
+        column(3,fluidRow(box(title = "Leaflet Map",solidHeader = TRUE, status = "primary", width = 12, leafletOutput("leaf",height = 400)))
         )
       ),
       fluidRow(
-        column(4,
-               fluidRow(box(title = "Top Ten Users and Amount of Litter Picked Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("tableUser",height = 400)))
+        column(4,fluidRow(box(title = "# of Litter per Weekday",solidHeader = TRUE, status = "primary", width = 12, plotOutput("bar2",height = 400)))
         ),
-        column(2,
-               fluidRow(box(width = 12, textOutput("total")))
+        column(4,fluidRow(box(title = "# of Litter per Hour",solidHeader = TRUE, status = "primary", width = 12, plotOutput("bar3",height = 400)))
         ),
-        column(6,
-               fluidRow(box(title = "Leaflet Map",solidHeader = TRUE, status = "primary", width = 12, leafletOutput("leaf",height = 400)))
-        )
-      ),
-    )
+        column(4,fluidRow(box(title = "# of Litter per Top Tag",solidHeader = TRUE, status = "primary", width = 12, plotOutput("bar4",height = 400)))
+        ),
+    ))
 )
 
 server <- function(input, output) {
@@ -173,7 +170,7 @@ server <- function(input, output) {
     litter_date <- as.data.frame(table(date))
     
     ggplot(litter_date, aes(x= date, y=Freq))+geom_bar(stat="identity", fill="steelblue") +
-      labs(x="Day", y = "Litter Count")  
+      labs(x="Day", y = "Litter Count") + theme(axis.text.x=element_text(angle=90, hjust=1))
   })
   output$table1 <- DT::renderDataTable(
     DT::datatable({
@@ -269,8 +266,64 @@ server <- function(input, output) {
     map
   })
   output$total <- renderText(
-    {paste("Total Number of Litter Tagged: ", length(data$tags))}
+    {paste(length(data$tags))}
   ) 
+  
+  #------------------------------Creating notification popup for resources-------
+  #https://shiny.rstudio.com/reference/shiny/1.4.0/showNotification.html
+  #used above site as reference
+  
+  # A queue of notification IDs
+  ids <- character(0)
+  # A counter
+  n <- 0
+  
+  observeEvent(input$show, {
+    # Save the ID for removal later
+    id <- showNotification(
+      paste(
+        "Basis of code from Prof.Andrew Johnsons Example at...",
+        "** https://www.evl.uic.edu/aej/424/week02.html",
+        "Resources...", 
+        "** https://www.rdocumentation.org/packages/splitstackshape/versions/1.4.8/topics/cSplit",
+        "** https://cran.r-project.org/web/packages/stringr/stringr.pdf", 
+        "** https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/as.data.frame",
+        "** https://www.datamentor.io/r-programming/data-frame/",
+        "** https://rstudio.github.io/leaflet/markers.html",
+        "** https://stackoverflow.com/questions/50253615/rendering-datatable-in-shiny",
+        "** https://rstudio.github.io/DT/shiny.html",
+        "** https://shiny.rstudio.com/reference/shiny/0.14/renderDataTable.html",
+        "** https://shiny.rstudio.com/articles/datatables.html",
+        "** https://stackoverflow.com/questions/56310163/reactive-bar-chart-in-shiny-r",
+        "** https://stackoverflow.com/questions/21515800/subset-a-data-frame-based-on-user-input-shiny",
+        "** https://www.rdocumentation.org/packages/lessR/versions/3.7.6/topics/Subset",
+        "** https://www.statmethods.net/management/subset.html",
+        "** http://www.sthda.com/english/wiki/ggplot2-barplots-quick-start-guide-r-software-and-data-visualization",
+        "** https://stackoverflow.com/questions/40199274/how-to-force-specific-order-of-the-variables-on-the-x-axis",
+        "** https://shiny.rstudio.com/articles/reactivity-overview.html",
+        "** https://shiny.rstudio.com/tutorial/written-tutorial/lesson6/",
+        "** https://stackoverflow.com/questions/56310163/reactive-bar-chart-in-shiny-r",
+        "** https://shiny.rstudio.com/images/shiny-cheatsheet.pdf",
+        "** https://stackoverflow.com/questions/14450384/create-a-vector-of-all-days-between-two-dates",
+        "** https://rawgit.com/rstudio/cheatsheets/master/lubridate.pdf",
+        "** https://lubridate.tidyverse.org/",
+        "** https://www.dummies.com/programming/r/how-to-work-with-dates-in-r/",
+        "** https://rpubs.com/Mentors_Ubiqum/removing_outliers",
+        "** https://shiny.rstudio.com/reference/shiny/latest/fluidPage.html",
+        "...Libraries used...",
+        "** shiny, shinydashboard, ggplot2, lubridate, leaflet, stringr, splitstackshape, DT"
+        ), 
+      duration = NULL)
+    ids <<- c(ids, id)
+    n <<- n + 1
+  })
+  
+  observeEvent(input$close, {
+    if (length(ids) > 0)
+      removeNotification(ids[1])
+    ids <<- ids[-1]
+  })
+  
 }
 
 # Run the application 
