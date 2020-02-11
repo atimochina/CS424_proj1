@@ -5,8 +5,8 @@ account: atimochina
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1754775
-bundleId: 2790515
+bundleId: 2790694
 url: https://atimochina.shinyapps.io/TheLitterProject/
-when: 1581381697.83549
+when: 1581387397.05342
 asMultiple: FALSE
 asStatic: FALSE

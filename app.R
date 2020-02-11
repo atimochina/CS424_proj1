@@ -105,9 +105,9 @@ ui <- dashboardPage(
     dashboardSidebar(disable = FALSE, collapsed = FALSE,
                      br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), #breaks
                      br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), #breaks
-                     selectInput("User", "Select user to visualize", c("summary",top_ten_users[,1]),selected = "summary"),
+                     selectInput("User", "Top Ten Users", c("summary",top_ten_users[,1]),selected = "summary"),
                      br(),br(),br(),br(),
-                     selectInput("TagSelect", "Select tag to update visuals", c("none",top_ten_tags[,1]), selected = "none"),
+                     selectInput("TagSelect", "Top Ten Tag", c("none",top_ten_tags[,1]), selected = "none"),
                      br(),
                      actionButton("show", "Open Resources"),
                      actionButton("close", "Close Resources")
@@ -126,7 +126,8 @@ ui <- dashboardPage(
         ),
         column(2,fluidRow(box(title = "# of Litter per Top Tag Table",solidHeader = TRUE, status = "primary", width = 12, dataTableOutput("table4",height = 400)))
         ),
-        column(1,fluidRow(box(title = "Total Number of Litter Picked-Up: ", solidHeader = TRUE, status = "primary", width = 12, textOutput("total")))
+        column(1,fluidRow(box(title = "Total Number of Litter Picked-Up: ", solidHeader = TRUE, status = "primary", width = 12, textOutput("total"))),
+               fluidRow(box(title = "Top Ten Users", solidHeader = TRUE,status = "primary", width = 12, dataTableOutput("tableUser", height = 300)))
         ),
         column(3,fluidRow(box(title = "Leaflet Map",solidHeader = TRUE, status = "primary", width = 12, leafletOutput("leaf",height = 400)))
         )
